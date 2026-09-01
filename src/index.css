@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "ZCOOL QingKe HuangYou", "Noto Sans SC", sans-serif;
+  --font-body: "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Noto Sans SC", ui-monospace, monospace;
+
+  --color-pine-950: #06140f;
+  --color-pine-900: #0b2019;
+  --color-pine-850: #0e271e;
+  --color-pine-800: #113026;
+  --color-pine-700: #174334;
+  --color-pine-600: #1f5743;
+
+  --color-line: #265743;
+  --color-line-soft: #1a3d30;
+
+  --color-gold: #e8b54a;
+  --color-gold-soft: #f3d488;
+  --color-jade: #43d98c;
+  --color-jade-deep: #1e7a50;
+  --color-coral: #f2695c;
+
+  --color-cream: #f1eada;
+  --color-mist: #9ab5a8;
+  --color-dim: #64826f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(232, 181, 74, 0.85);
+  color: #0b2019;
+}
+
+/* ---------- 自定义滑块 ---------- */
+input[type="range"].fin-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.fin-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--track-on, #e8b54a) 0%,
+    var(--track-on, #e8b54a) var(--p, 50%),
+    #1a3d30 var(--p, 50%),
+    #1a3d30 100%
+  );
+}
+.fin-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: #1a3d30;
+}
+.fin-range::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track-on, #e8b54a);
+}
+.fin-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  transform: rotate(45deg);
+  background: #f3d488;
+  border: 3px solid #0b2019;
+  box-shadow: 0 0 0 1.5px var(--track-on, #e8b54a), 0 4px 10px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.fin-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  transform: rotate(45deg);
+  background: #f3d488;
+  border: 3px solid #0b2019;
+  box-shadow: 0 0 0 1.5px var(--track-on, #e8b54a), 0 4px 10px rgba(0, 0, 0, 0.45);
+}
+.fin-range:hover::-webkit-slider-thumb,
+.fin-range:focus-visible::-webkit-slider-thumb {
+  transform: rotate(45deg) scale(1.18);
+  box-shadow: 0 0 0 1.5px var(--track-on, #e8b54a), 0 0 18px rgba(232, 181, 74, 0.55);
+}
+.fin-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+/* ---------- 跑马灯 ---------- */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: ticker-scroll 32s linear infinite;
+  will-change: transform;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* ---------- 环境元素 ---------- */
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(6deg);
+  }
+}
+.floaty {
+  animation: floaty 11s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.pulse-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: pulse-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+@keyframes blink-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.blink-soft {
+  animation: blink-soft 2.2s ease-in-out infinite;
+}
+
+/* 账本网格背景 */
+.ledger-grid {
+  background-image: linear-gradient(rgba(154, 181, 168, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(154, 181, 168, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.wm-vertical {
+  writing-mode: vertical-rl;
+}
+
+/* 滚动条 */
+.thin-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: #0b2019;
+  border-radius: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #1f5743;
+  border-radius: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+  background: #e8b54a;
+}
