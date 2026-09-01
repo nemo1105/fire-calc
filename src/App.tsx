@@ -121,7 +121,7 @@ export default function App() {
               <ResultHero p={p} r={result} />
             </Reveal>
 
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+            <div className="grid gap-6">
               <Reveal delay={0.05}>
                 <ProjectionChart r={result} S={p.S} />
               </Reveal>

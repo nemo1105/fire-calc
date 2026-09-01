@@ -1,5 +1,5 @@
-import type { CSSProperties } from "react";
-import { PRESETS, fmtMoney, type Params } from "../lib/finance";
+import { useState, type CSSProperties } from "react";
+import { PRESETS, fmtMoney, trimNum, type Params } from "../lib/finance";
 
 interface Props {
   p: Params;
@@ -15,6 +15,57 @@ function VarBadge({ k, cls }: { k: string; cls: string }) {
     >
       {k}
     </span>
+  );
+}
+
+/** 自由数字输入：聚焦后可编辑（可清空、可输任意值含负数），失焦/回车提交，Esc 还原 */
+function NumInput({
+  value,
+  decimals,
+  disabled,
+  onCommit,
+}: {
+  value: number;
+  decimals: number;
+  disabled?: boolean;
+  onCommit: (v: number) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const formatted = trimNum(value, decimals);
+
+  const commit = () => {
+    if (draft === null) return;
+    const raw = draft.replace(/,/g, "").trim();
+    const v = Number(raw);
+    setDraft(null);
+    if (raw !== "" && Number.isFinite(v) && v !== value) onCommit(v);
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="decimal"
+      autoComplete="off"
+      spellCheck={false}
+      placeholder="—"
+      className="w-24 rounded border border-line bg-pine-950/70 px-2 py-1 text-right font-mono text-sm font-semibold text-gold-soft caret-gold outline-none transition-all duration-150 hover:border-gold/40 focus:border-gold focus:bg-pine-950 focus:shadow-[0_0_0_3px_rgba(232,181,74,0.15)] disabled:cursor-not-allowed disabled:opacity-50"
+      value={draft ?? formatted}
+      disabled={disabled}
+      aria-invalid={draft !== null && draft.trim() !== "" && !Number.isFinite(Number(draft.replace(/,/g, "")))}
+      onFocus={(e) => {
+        setDraft(formatted);
+        requestAnimationFrame(() => e.target.select());
+      }}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") e.currentTarget.blur();
+        if (e.key === "Escape") {
+          setDraft(null);
+          e.currentTarget.blur();
+        }
+      }}
+    />
   );
 }
 
@@ -47,7 +98,9 @@ function Row({
   disabled?: boolean;
   trackColor?: string;
 }) {
-  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+  const clamped = Math.min(max, Math.max(min, value));
+  const pct = Math.min(100, Math.max(0, ((clamped - min) / (max - min)) * 100));
+  const outOfSlider = value < min || value > max;
   const style = { "--p": `${pct}%`, "--track-on": trackColor } as CSSProperties;
   return (
     <div className={`group ${disabled ? "opacity-45" : ""} transition-opacity duration-300`}>
@@ -57,24 +110,16 @@ function Row({
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-[13px] font-bold text-cream">{title}</span>
             <span className="flex items-baseline gap-1">
-              <input
-                type="number"
-                inputMode="decimal"
-                className="w-24 rounded border border-line bg-pine-950/70 px-2 py-1 text-right font-mono text-sm font-semibold text-gold-soft outline-none transition-colors focus:border-gold disabled:cursor-not-allowed"
-                value={Number(value.toFixed(decimals))}
-                min={min}
-                max={max}
-                step={step}
-                disabled={disabled}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  if (!Number.isNaN(v)) onChange(Math.min(max, Math.max(min, v)));
-                }}
-              />
+              <NumInput value={value} decimals={decimals} disabled={disabled} onCommit={onChange} />
               <span className="text-[11px] text-mist">{unit}</span>
             </span>
           </div>
-          <p className="mt-0.5 text-[11px] leading-snug text-dim">{hint}</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-dim">
+            {hint}
+            {outOfSlider && !disabled && (
+              <span className="ml-1 font-mono text-[10px] text-gold-soft">· 已超出滑杆范围，数值仍可生效</span>
+            )}
+          </p>
         </div>
       </div>
       <input
@@ -84,7 +129,7 @@ function Row({
         min={min}
         max={max}
         step={step}
-        value={value}
+        value={clamped}
         disabled={disabled}
         aria-label={title}
         onChange={(e) => onChange(Number(e.target.value))}
@@ -100,6 +145,9 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
         <h2 className="font-display text-lg tracking-wide text-cream">参数 · 四个变量</h2>
         <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-dim">Inputs</span>
       </div>
+      <p className="border-b border-dashed border-line-soft bg-pine-900/40 px-5 py-2 text-[10.5px] leading-snug text-dim">
+        拖动滑杆快捷调节 · 点击数字可自由编辑——支持清空重输与负数，回车确认 / Esc 取消
+      </p>
 
       {/* 预设场景 */}
       <div className="px-5 pt-4">

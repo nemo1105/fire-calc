@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import type { CSSProperties, ReactNode } from "react";
 import type { Params, Result } from "../lib/finance";
 import { fmtSignedWan, fmtWan } from "../lib/finance";
 import { useAnimatedNumber } from "../lib/useAnimatedNumber";
@@ -13,6 +14,60 @@ function Corners() {
       <span className={`${c} bottom-2 right-2 border-b-2 border-r-2`} />
     </>
   );
+}
+
+/* ---------- 3D 公式键帽 ---------- */
+
+type Tone = "gold" | "jade" | "coral" | "mist";
+
+const KEY_BG: Record<Tone, string> = {
+  gold: "border-gold/30 from-gold/[0.17] to-gold/[0.03]",
+  jade: "border-jade/30 from-jade/[0.15] to-jade/[0.03]",
+  coral: "border-coral/30 from-coral/[0.15] to-coral/[0.03]",
+  mist: "border-line from-pine-800/90 to-pine-900",
+};
+
+const KEY_VAL: Record<Tone, string> = {
+  gold: "text-gold-soft",
+  jade: "text-jade",
+  coral: "text-coral",
+  mist: "text-cream",
+};
+
+const KEY_GLOW: Record<Tone, string> = {
+  gold: "rgba(232,181,74,0.32)",
+  jade: "rgba(67,217,140,0.3)",
+  coral: "rgba(242,105,92,0.3)",
+  mist: "rgba(154,181,168,0.2)",
+};
+
+function Key({
+  tone,
+  label,
+  value,
+  sub,
+  strong = false,
+}: {
+  tone: Tone;
+  label: string;
+  value: string;
+  sub?: string;
+  strong?: boolean;
+}) {
+  return (
+    <div
+      style={{ "--key-glow": KEY_GLOW[tone] } as CSSProperties}
+      className={`key3d ${strong ? "key-strong" : ""} select-none rounded-md border border-t-white/15 bg-gradient-to-b px-3.5 py-2 ${KEY_BG[tone]}`}
+    >
+      <div className="whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.16em] text-dim">{label}</div>
+      <div className={`whitespace-nowrap font-mono text-[15px] font-bold leading-snug ${KEY_VAL[tone]}`}>{value}</div>
+      {sub && <div className="whitespace-nowrap font-mono text-[10px] text-mist">{sub}</div>}
+    </div>
+  );
+}
+
+function Op({ children }: { children: ReactNode }) {
+  return <span className="select-none font-mono text-xl font-bold text-dim">{children}</span>;
 }
 
 const STAMP: Record<
@@ -48,12 +103,12 @@ function Gauge({ coverage, free }: { coverage: number; free: boolean }) {
         <line x1={100} y1={100} x2={nx} y2={ny} stroke="#f1eada" strokeWidth="2.5" strokeLinecap="round" />
         <circle cx="100" cy="100" r="5" fill="#f1eada" />
       </svg>
-      <div className="-mt-7 text-center">
-        <div className="font-mono text-2xl font-bold text-cream">
+      <div className="mt-2 text-center">
+        <div className="font-mono text-2xl font-bold leading-none text-cream">
           {(coverage * 100).toFixed(0)}
           <span className="text-sm text-mist">%</span>
         </div>
-        <div className="text-[11px] tracking-wide text-dim">目标资本达成率 C / C*</div>
+        <div className="mt-1 text-[11px] tracking-wide text-dim">目标资本达成率 C / C*</div>
       </div>
     </div>
   );
@@ -131,28 +186,33 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             )}
           </p>
 
-          {/* 公式拆解 */}
-          <div className="mt-5 flex flex-wrap items-center gap-2 font-mono text-[12.5px]">
-            <span className="rounded border border-gold/40 bg-gold/10 px-2.5 py-1.5 text-gold-soft">
-              C {fmtWan(p.C)}
-            </span>
-            <span className="text-dim">×</span>
-            <span className="rounded border border-line bg-pine-900 px-2.5 py-1.5 text-cream">
-              ( Rw {p.Rw}%{p.useInflation ? ` − Rf ${p.Rf}%` : ""} ={" "}
-              <b className={r.ratePct >= 0 ? "text-jade" : "text-coral"}>{r.ratePct.toFixed(1)}%</b> )
-            </span>
-            <span className="text-dim">=</span>
-            <span
-              className={`rounded border px-2.5 py-1.5 font-bold ${
-                passiveCovers ? "border-jade/50 bg-jade/10 text-jade" : "border-coral/50 bg-coral/10 text-coral"
-              }`}
-            >
-              被动收入 {fmtWan(r.passive)}
-            </span>
-            <span className="text-dim">vs</span>
-            <span className="rounded border border-coral/40 bg-coral/5 px-2.5 py-1.5 text-coral">
-              年开销 H {fmtWan(p.H)}
-            </span>
+          {/* 公式拆解 · 单行 3D 等式 */}
+          <div className="mt-6 overflow-x-auto pb-1.5 thin-scroll">
+            <div className="flex w-max flex-nowrap items-center gap-2.5">
+              <Key tone="gold" label="C · 资本总量" value={fmtWan(p.C)} />
+              <Op>×</Op>
+              <Key
+                tone="mist"
+                label={p.useInflation ? "Rw − Rf · 实际收益率" : "Rw · 名义收益率"}
+                value={`${r.ratePct.toFixed(1)}%`}
+                sub={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
+              />
+              <Op>=</Op>
+              <Key
+                tone={passiveCovers ? "jade" : "coral"}
+                label="年被动收入"
+                value={fmtWan(r.passive)}
+              />
+              <Op>−</Op>
+              <Key tone="coral" label="H · 年开销" value={fmtWan(p.H)} />
+              <Op>=</Op>
+              <Key
+                tone={r.fn >= 0 ? "jade" : "coral"}
+                label="Fn · 自由指数"
+                value={fmtSignedWan(r.fn)}
+                strong
+              />
+            </div>
           </div>
 
           {p.useInflation && r.ratePct <= 0 && (
