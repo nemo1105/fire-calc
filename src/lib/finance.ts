@@ -81,7 +81,7 @@ export function sensitivityFn(C: number, H: number, rw: number, rf: number): num
 
 /* ---------------- 格式化 ---------------- */
 
-function trimNum(n: number, d: number): string {
+export function trimNum(n: number, d: number): string {
   return parseFloat(n.toFixed(d)).toLocaleString("en-US", {
     maximumFractionDigits: d,
   });
@@ -116,10 +116,10 @@ export interface Preset {
 
 export const PRESETS: Preset[] = [
   {
-    id: "article",
-    name: "文中示例",
-    desc: "1000万资本 · 年开销30万 · 收益9% · 通胀5%",
-    values: { C: 10_000_000, H: 300_000, Rw: 9, Rf: 5, useInflation: true, S: 10_000 },
+    id: "classic",
+    name: "经典案例",
+    desc: "1000万资本 · 年开销30万 · 收益9% · 通胀3%",
+    values: { C: 10_000_000, H: 300_000, Rw: 9, Rf: 3, useInflation: true, S: 10_000 },
   },
   {
     id: "lean",
@@ -131,13 +131,13 @@ export const PRESETS: Preset[] = [
     id: "decent",
     name: "体面中产",
     desc: "维持良好生活质量的年开销",
-    values: { C: 6_000_000, H: 300_000, Rw: 8, Rf: 4, useInflation: true, S: 15_000 },
+    values: { C: 6_000_000, H: 300_000, Rw: 8, Rf: 3, useInflation: true, S: 15_000 },
   },
   {
     id: "rich",
     name: "高配人生",
     desc: "更高的幸福阈值，更大的资本盘",
-    values: { C: 20_000_000, H: 600_000, Rw: 8.5, Rf: 4.5, useInflation: true, S: 30_000 },
+    values: { C: 20_000_000, H: 600_000, Rw: 8.5, Rf: 3, useInflation: true, S: 30_000 },
   },
 ];
 
