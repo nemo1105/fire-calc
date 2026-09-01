@@ -1,0 +1,66 @@
+# ============================================================
+# 部署到 GitHub Pages
+# 触发：推送到 main / master 分支，或在 Actions 页面手动运行
+# 前置：仓库 Settings → Pages → Source 选择 "GitHub Actions"
+# ============================================================
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  # 允许在 GitHub Actions 页面手动触发
+  workflow_dispatch:
+
+# 部署所需的最小权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只保留一次部署，新的推送排队等待（不取消正在进行的部署）
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 构建
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型检查
+        run: npm run typecheck --if-present
+
+      - name: 构建生产包
+        # --base=./ 使资源使用相对路径，
+        # 保证在 https://<username>.github.io/<repo>/ 子路径下也能正确加载
+        run: npm run build -- --base=./
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: 部署
+    needs: build
+    runs-on: ubuntu-latest
+    # 绑定 github-pages 环境，可在仓库 Environments 中查看部署历史
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

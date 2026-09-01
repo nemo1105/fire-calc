@@ -1,0 +1,34 @@
+# ============================================================
+# 持续集成：类型检查 + 构建验证
+# 触发：任意 PR，或推送到 main / master 以外的分支
+# （main 分支的构建由 deploy.yml 统一负责，避免重复运行）
+# ============================================================
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main, master]
+
+jobs:
+  check:
+    name: 类型检查 & 构建
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型检查
+        run: npm run typecheck --if-present
+
+      - name: 构建验证
+        run: npm run build
