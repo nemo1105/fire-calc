@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { PRESETS, fmtMoney, trimNum, type Params } from "../lib/finance";
 
 interface Props {
@@ -18,7 +18,8 @@ function VarBadge({ k, cls }: { k: string; cls: string }) {
   );
 }
 
-/** 自由数字输入：聚焦后可编辑（可清空、可输任意值含负数），失焦/回车提交，Esc 还原 */
+/** 自由数字输入：聚焦后可编辑（可清空、可输任意值含负数）；
+ *  输入后 200ms 防抖自动提交并触发计算，失焦/回车立即提交，Esc 还原 */
 function NumInput({
   value,
   decimals,
@@ -31,9 +32,33 @@ function NumInput({
   onCommit: (v: number) => void;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
+  const timerRef = useRef<number | null>(null);
   const formatted = trimNum(value, decimals);
 
-  const commit = () => {
+  const clearTimer = () => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  useEffect(() => clearTimer, []);
+
+  /** 防抖提交：停止输入 200ms 后，合法数值自动生效并参与计算 */
+  const scheduleCommit = (text: string) => {
+    clearTimer();
+    const raw = text.replace(/,/g, "").trim();
+    const v = Number(raw);
+    if (raw === "" || !Number.isFinite(v)) return; // 空 / 输入中途（如 "-" "3."）不提交
+    timerRef.current = window.setTimeout(() => {
+      timerRef.current = null;
+      if (v !== value) onCommit(v);
+    }, 200);
+  };
+
+  /** 失焦 / 回车：立即提交 */
+  const commitNow = () => {
+    clearTimer();
     if (draft === null) return;
     const raw = draft.replace(/,/g, "").trim();
     const v = Number(raw);
@@ -53,14 +78,19 @@ function NumInput({
       disabled={disabled}
       aria-invalid={draft !== null && draft.trim() !== "" && !Number.isFinite(Number(draft.replace(/,/g, "")))}
       onFocus={(e) => {
+        clearTimer();
         setDraft(formatted);
         requestAnimationFrame(() => e.target.select());
       }}
-      onChange={(e) => setDraft(e.target.value)}
-      onBlur={commit}
+      onChange={(e) => {
+        setDraft(e.target.value);
+        scheduleCommit(e.target.value);
+      }}
+      onBlur={commitNow}
       onKeyDown={(e) => {
         if (e.key === "Enter") e.currentTarget.blur();
         if (e.key === "Escape") {
+          clearTimer();
           setDraft(null);
           e.currentTarget.blur();
         }

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { Params, Result } from "../lib/finance";
 import { fmtSignedWan, fmtWan } from "../lib/finance";
 import { useAnimatedNumber } from "../lib/useAnimatedNumber";
@@ -16,60 +16,6 @@ function Corners() {
   );
 }
 
-/* ---------- 3D 公式键帽 ---------- */
-
-type Tone = "gold" | "jade" | "coral" | "mist";
-
-const KEY_BG: Record<Tone, string> = {
-  gold: "border-gold/30 from-gold/[0.17] to-gold/[0.03]",
-  jade: "border-jade/30 from-jade/[0.15] to-jade/[0.03]",
-  coral: "border-coral/30 from-coral/[0.15] to-coral/[0.03]",
-  mist: "border-line from-pine-800/90 to-pine-900",
-};
-
-const KEY_VAL: Record<Tone, string> = {
-  gold: "text-gold-soft",
-  jade: "text-jade",
-  coral: "text-coral",
-  mist: "text-cream",
-};
-
-const KEY_GLOW: Record<Tone, string> = {
-  gold: "rgba(232,181,74,0.32)",
-  jade: "rgba(67,217,140,0.3)",
-  coral: "rgba(242,105,92,0.3)",
-  mist: "rgba(154,181,168,0.2)",
-};
-
-function Key({
-  tone,
-  label,
-  value,
-  sub,
-  strong = false,
-}: {
-  tone: Tone;
-  label: string;
-  value: string;
-  sub?: string;
-  strong?: boolean;
-}) {
-  return (
-    <div
-      style={{ "--key-glow": KEY_GLOW[tone] } as CSSProperties}
-      className={`key3d ${strong ? "key-strong" : ""} select-none rounded-md border border-t-white/15 bg-gradient-to-b px-3.5 py-2 ${KEY_BG[tone]}`}
-    >
-      <div className="whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.16em] text-dim">{label}</div>
-      <div className={`whitespace-nowrap font-mono text-[15px] font-bold leading-snug ${KEY_VAL[tone]}`}>{value}</div>
-      {sub && <div className="whitespace-nowrap font-mono text-[10px] text-mist">{sub}</div>}
-    </div>
-  );
-}
-
-function Op({ children }: { children: ReactNode }) {
-  return <span className="select-none font-mono text-xl font-bold text-dim">{children}</span>;
-}
-
 const STAMP: Record<
   Result["status"],
   { zh: string; en: string; cls: string; border: string }
@@ -78,6 +24,41 @@ const STAMP: Record<
   close: { zh: "临门一脚", en: "ALMOST", cls: "text-gold-soft", border: "border-gold" },
   far: { zh: "道阻且长", en: "ONWARD", cls: "text-coral", border: "border-coral" },
 };
+
+/* ---------- 公式单元格（扁平色块，靠排版分层） ---------- */
+
+const KEY_TONES = {
+  gold: "border-gold/50 bg-gold/10 text-gold-soft",
+  jade: "border-jade/50 bg-jade/10 text-jade",
+  coral: "border-coral/50 bg-coral/10 text-coral",
+  mist: "border-line bg-pine-900 text-cream",
+} as const;
+
+function Key({
+  tone,
+  label,
+  value,
+  sub,
+}: {
+  tone: keyof typeof KEY_TONES;
+  label: string;
+  value: string;
+  sub?: string;
+}) {
+  return (
+    <span className={`flex shrink-0 flex-col items-center rounded-md border px-3.5 py-2 ${KEY_TONES[tone]}`}>
+      <span className="whitespace-nowrap text-[10px] font-semibold tracking-wide opacity-75">{label}</span>
+      <span className="whitespace-nowrap font-mono text-[15px] font-bold leading-snug">{value}</span>
+      {sub && <span className="whitespace-nowrap font-mono text-[10px] leading-snug opacity-65">{sub}</span>}
+    </span>
+  );
+}
+
+function Op({ children }: { children: ReactNode }) {
+  return <span className="shrink-0 font-mono text-lg font-bold text-dim">{children}</span>;
+}
+
+/* ---------- 仪表盘 ---------- */
 
 function Gauge({ coverage, free }: { coverage: number; free: boolean }) {
   const anim = useAnimatedNumber(Math.min(coverage, 1) * 100, 700);
@@ -103,7 +84,7 @@ function Gauge({ coverage, free }: { coverage: number; free: boolean }) {
         <line x1={100} y1={100} x2={nx} y2={ny} stroke="#f1eada" strokeWidth="2.5" strokeLinecap="round" />
         <circle cx="100" cy="100" r="5" fill="#f1eada" />
       </svg>
-      <div className="mt-2 text-center">
+      <div className="mt-2.5 text-center">
         <div className="font-mono text-2xl font-bold leading-none text-cream">
           {(coverage * 100).toFixed(0)}
           <span className="text-sm text-mist">%</span>
@@ -129,14 +110,15 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
   const free = r.status === "free";
   const stamp = STAMP[r.status];
   const passiveCovers = r.passive >= p.H;
+  const fnColor = r.fn >= 0 ? "text-jade" : "text-coral";
 
   return (
     <section className="relative overflow-hidden rounded-lg border border-line bg-pine-850/90 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
       <Corners />
-      <div className="grid gap-0 lg:grid-cols-[1fr_260px]">
-        {/* 左：Fn 大数字 */}
-        <div className="relative px-6 py-6 sm:px-8">
-          <div className="flex items-center justify-between gap-3">
+      <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_264px]">
+        {/* 左：分层公式 + 结果 */}
+        <div className="relative min-w-0 px-6 py-6 sm:px-8">
+          <div className="flex items-start justify-between gap-3">
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-dim">
                 Financial Freedom Index
@@ -158,18 +140,62 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             </AnimatePresence>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-1">
-            <span
-              className={`font-mono text-[52px] font-bold leading-none tracking-tight sm:text-[68px] ${
-                free ? "text-jade" : shown >= 0 ? "text-gold-soft" : "text-coral"
-              }`}
-            >
-              {fmtSignedWan(shown)}
-            </span>
-            <span className="mb-2 font-mono text-sm text-mist">元 / 年</span>
+          {/* 分层公式：上层 C × 实际收益率；中层 被动收入 − 年开销；右侧 = 结果 */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-5">
+            <div className="min-w-0">
+              {/* 上层：资本 × 收益率 */}
+              <div className="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-1 thin-scroll">
+                <Key tone="gold" label="C · 资本总量" value={fmtWan(p.C)} />
+                <Op>×</Op>
+                <Key
+                  tone="mist"
+                  label={p.useInflation ? "Rw − Rf · 实际收益率" : "Rw · 名义收益率"}
+                  value={`${r.ratePct.toFixed(1)}%`}
+                  sub={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
+                />
+              </div>
+              {/* 产出箭头 */}
+              <div className="my-1 flex items-center gap-2 pl-8">
+                <svg width="10" height="13" viewBox="0 0 10 13" aria-hidden className="text-dim">
+                  <path
+                    d="M5 0v9M1.5 6 5 11l3.5-5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-dim">产出</span>
+              </div>
+              {/* 中层：被动收入 − 年开销 */}
+              <div className="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-1 thin-scroll">
+                <Key tone={passiveCovers ? "jade" : "coral"} label="年被动收入" value={fmtWan(r.passive)} />
+                <Op>−</Op>
+                <Key tone="coral" label="H · 年开销" value={fmtWan(p.H)} />
+              </div>
+            </div>
+
+            <div className="hidden h-24 w-px shrink-0 bg-gradient-to-b from-transparent via-line to-transparent sm:block" />
+
+            {/* 右侧：结果 */}
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-3xl font-bold text-dim">=</span>
+              <div>
+                <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
+                  <span className={`whitespace-nowrap font-mono text-[42px] font-bold leading-none tracking-tight ${fnColor}`}>
+                    {fmtSignedWan(shown)}
+                  </span>
+                  <span className="font-mono text-xs text-mist">元 / 年</span>
+                </div>
+                <div className="mt-2 text-[11px] tracking-wide text-dim">
+                  Fn · 自由指数 {free ? "· 为正即已自由" : "· 为正之前，继续积累"}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <p className="mt-3 max-w-xl text-[13px] leading-relaxed text-mist">
+          <p className="mt-5 max-w-xl text-[13px] leading-relaxed text-mist">
             {free ? (
               <>
                 你的资本收益在覆盖全年开销后，每年还富余{" "}
@@ -186,35 +212,6 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             )}
           </p>
 
-          {/* 公式拆解 · 单行 3D 等式 */}
-          <div className="mt-6 overflow-x-auto pb-1.5 thin-scroll">
-            <div className="flex w-max flex-nowrap items-center gap-2.5">
-              <Key tone="gold" label="C · 资本总量" value={fmtWan(p.C)} />
-              <Op>×</Op>
-              <Key
-                tone="mist"
-                label={p.useInflation ? "Rw − Rf · 实际收益率" : "Rw · 名义收益率"}
-                value={`${r.ratePct.toFixed(1)}%`}
-                sub={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
-              />
-              <Op>=</Op>
-              <Key
-                tone={passiveCovers ? "jade" : "coral"}
-                label="年被动收入"
-                value={fmtWan(r.passive)}
-              />
-              <Op>−</Op>
-              <Key tone="coral" label="H · 年开销" value={fmtWan(p.H)} />
-              <Op>=</Op>
-              <Key
-                tone={r.fn >= 0 ? "jade" : "coral"}
-                label="Fn · 自由指数"
-                value={fmtSignedWan(r.fn)}
-                strong
-              />
-            </div>
-          </div>
-
           {p.useInflation && r.ratePct <= 0 && (
             <p className="mt-3 rounded border border-coral/50 bg-coral/10 px-3 py-2 text-[12px] text-coral">
               ⚠ 收益率跑不赢通胀（Rw ≤ Rf），资本购买力正在缩水——先让收益跑赢印钞机。
@@ -229,18 +226,30 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             <Stat
               label="所需资本 C* = H/(Rw−Rf)"
               value={Number.isFinite(r.required) ? fmtWan(r.required) : "∞"}
-              sub={Number.isFinite(r.required) && r.required > p.C ? `还差 ${fmtWan(r.required - p.C)}` : Number.isFinite(r.required) ? "已达标" : "收益 ≤ 通胀，无解"}
+              sub={
+                Number.isFinite(r.required) && r.required > p.C
+                  ? `还差 ${fmtWan(r.required - p.C)}`
+                  : Number.isFinite(r.required)
+                    ? "已达标"
+                    : "收益 ≤ 通胀，无解"
+              }
               tone="text-gold-soft"
             />
             <Stat
-              label="月被动收入"
-              value={`${fmtWan(r.passive / 12)} /月`}
-              sub={
+              label="被动收入覆盖力"
+              value={
                 r.monthsCover === null
                   ? "无正收益"
                   : r.monthsCover >= 12
-                    ? "已覆盖全年开销"
-                    : `可覆盖 ${r.monthsCover.toFixed(1)} 个月开销`
+                    ? "≥ 12 个月"
+                    : `${r.monthsCover.toFixed(1)} 个月`
+              }
+              sub={
+                r.monthsCover === null
+                  ? "先让收益率为正"
+                  : r.monthsCover >= 12
+                    ? "被动收入已覆盖全年开销"
+                    : `相当于全年开销的 ${(r.monthsCover! / 12 * 100).toFixed(0)}%`
               }
               tone={r.monthsCover !== null && r.monthsCover >= 12 ? "text-jade" : "text-cream"}
             />

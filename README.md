@@ -11,6 +11,7 @@ npm install
 npm run dev      # 开发服务器
 npm run build    # 生产构建
 npm run typecheck
+npx vitest run   # 单元测试（src/lib/finance.test.ts：公式、边界、负数、格式化、预设）
 ```
 
 ## 部署到 GitHub Pages
