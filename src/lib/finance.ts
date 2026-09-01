@@ -41,7 +41,7 @@ export function computeResults(p: Params): Result {
   const fn = passive - p.H;
   const required = rate > 0 ? p.H / rate : Infinity;
   const coverage = Number.isFinite(required) && required > 0 ? p.C / required : fn >= 0 ? 1 : 0;
-  const monthsCover = passive > 0 ? p.H / (passive / 12) : null;
+  const monthsCover = passive > 0 && p.H > 0 ? (passive * 12) / p.H : null;
   const fyFund = p.H * 2;
 
   let status: FreeStatus = "far";
