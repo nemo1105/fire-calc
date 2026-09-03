@@ -41,7 +41,9 @@ function LedgerRow({
 }) {
   return (
     <div className="flex items-baseline gap-2.5 rounded px-1.5 py-[7px] transition-colors duration-150 hover:bg-pine-800/70">
-      <span className="w-4 shrink-0 text-center font-mono text-sm font-bold text-dim">{op ?? ""}</span>
+      <span className="w-6 shrink-0 text-center font-mono text-[21px] font-bold leading-none text-mist">
+        {op ?? ""}
+      </span>
       <span className="min-w-0 flex-1 truncate text-[13px] text-mist">
         {label}
         {note && <span className="ml-1.5 font-mono text-[10.5px] text-dim">({note})</span>}
@@ -170,7 +172,7 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
               <LedgerRow op="−" label="H · 幸福感阈值 · 年开销" value={fmtWan(p.H)} tone="text-coral" />
               <LedgerRule />
               <div className="flex items-center gap-2.5 px-1.5 pb-1.5 pt-2.5">
-                <span className="w-4 shrink-0 text-center font-mono text-base font-bold text-dim">=</span>
+                <span className="w-6 shrink-0 text-center font-mono text-[21px] font-bold leading-none text-gold">=</span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-display text-[15px] tracking-wide text-cream">
                     Fn · 财务自由指数

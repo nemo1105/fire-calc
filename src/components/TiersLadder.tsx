@@ -61,7 +61,7 @@ export default function TiersLadder({ C }: { C: number }) {
                   }`}
                 />
                 <div
-                  className={`relative rounded-md border px-3 py-3 text-center transition-all duration-200 group-hover:-translate-y-1 ${
+                  className={`relative flex flex-col rounded-md border px-3 py-3 text-center transition-all duration-200 group-hover:-translate-y-1 lg:h-[154px] ${
                     done
                       ? "border-gold/60 bg-gold/10 shadow-[0_8px_24px_rgba(232,181,74,0.12)]"
                       : isNext
@@ -87,15 +87,16 @@ export default function TiersLadder({ C }: { C: number }) {
                   <div className={`mt-1 font-mono text-[11px] font-semibold ${done ? "text-gold" : "text-mist"}`}>
                     {done ? "已解锁 ✓" : fmtWan(t.threshold)}
                   </div>
-                  <p className="mt-1 hidden text-[10px] leading-snug text-dim lg:block">{t.blurb}</p>
-                  {isNext && (
-                    <div className="mt-2 h-1 overflow-hidden rounded-full bg-pine-950">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-jade-deep to-jade transition-all duration-500"
-                        style={{ width: `${prog * 100}%` }}
-                      />
-                    </div>
-                  )}
+                  <p className="mt-auto hidden pt-1 text-[10px] leading-snug text-dim lg:block">{t.blurb}</p>
+                  {/* 常驻进度轨道：已解锁满格、下一段按进度、未解锁留空——卡片高度因此恒定 */}
+                  <div className="mt-2 h-1 overflow-hidden rounded-full bg-pine-950">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        done ? "bg-gold/80" : "bg-gradient-to-r from-jade-deep to-jade"
+                      }`}
+                      style={{ width: done ? "100%" : isNext ? `${prog * 100}%` : "0%" }}
+                    />
+                  </div>
                 </div>
               </li>
             );
