@@ -87,9 +87,10 @@ export function trimNum(n: number, d: number): string {
   });
 }
 
-/** 以 万/亿 为单位格式化金额（不带符号） */
+/** 以 万/亿/万亿 为单位格式化金额（不带符号） */
 export function fmtWan(y: number): string {
   const abs = Math.abs(y);
+  if (abs >= 1e12) return `${trimNum(y / 1e12, 2)} 万亿`;
   if (abs >= 1e8) return `${trimNum(y / 1e8, 2)} 亿`;
   if (abs >= 1e4) return `${trimNum(y / 1e4, 1)} 万`;
   return `${Math.round(y).toLocaleString("en-US")} 元`;

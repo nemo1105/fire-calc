@@ -1,5 +1,4 @@
 import { AnimatePresence, motion } from "framer-motion";
-import type { ReactNode } from "react";
 import type { Params, Result } from "../lib/finance";
 import { fmtSignedWan, fmtWan } from "../lib/finance";
 import { useAnimatedNumber } from "../lib/useAnimatedNumber";
@@ -25,37 +24,36 @@ const STAMP: Record<
   far: { zh: "道阻且长", en: "ONWARD", cls: "text-coral", border: "border-coral" },
 };
 
-/* ---------- 公式单元格（扁平色块，靠排版分层） ---------- */
+/* ---------- 账页推导：标签左对齐，数值右对齐成一列 ---------- */
 
-const KEY_TONES = {
-  gold: "border-gold/50 bg-gold/10 text-gold-soft",
-  jade: "border-jade/50 bg-jade/10 text-jade",
-  coral: "border-coral/50 bg-coral/10 text-coral",
-  mist: "border-line bg-pine-900 text-cream",
-} as const;
-
-function Key({
-  tone,
+function LedgerRow({
+  op,
   label,
+  note,
   value,
-  sub,
+  tone = "text-cream",
 }: {
-  tone: keyof typeof KEY_TONES;
+  op?: string;
   label: string;
+  note?: string;
   value: string;
-  sub?: string;
+  tone?: string;
 }) {
   return (
-    <span className={`flex shrink-0 flex-col items-center rounded-md border px-3.5 py-2 ${KEY_TONES[tone]}`}>
-      <span className="whitespace-nowrap text-[10px] font-semibold tracking-wide opacity-75">{label}</span>
-      <span className="whitespace-nowrap font-mono text-[15px] font-bold leading-snug">{value}</span>
-      {sub && <span className="whitespace-nowrap font-mono text-[10px] leading-snug opacity-65">{sub}</span>}
-    </span>
+    <div className="flex items-baseline gap-2.5 rounded px-1.5 py-[7px] transition-colors duration-150 hover:bg-pine-800/70">
+      <span className="w-4 shrink-0 text-center font-mono text-sm font-bold text-dim">{op ?? ""}</span>
+      <span className="min-w-0 flex-1 truncate text-[13px] text-mist">
+        {label}
+        {note && <span className="ml-1.5 font-mono text-[10.5px] text-dim">({note})</span>}
+      </span>
+      <span className={`shrink-0 font-mono text-sm font-bold tabular-nums ${tone}`}>{value}</span>
+    </div>
   );
 }
 
-function Op({ children }: { children: ReactNode }) {
-  return <span className="shrink-0 font-mono text-lg font-bold text-dim">{children}</span>;
+/** 账页进位线：两端略微出血，像手写账本 */
+function LedgerRule() {
+  return <div className="-mx-4 my-1 border-t border-dashed border-line" />;
 }
 
 /* ---------- 仪表盘 ---------- */
@@ -116,7 +114,7 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
     <section className="relative overflow-hidden rounded-lg border border-line bg-pine-850/90 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
       <Corners />
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_264px]">
-        {/* 左：分层公式 + 结果 */}
+        {/* 左：账页推导 */}
         <div className="relative min-w-0 px-6 py-6 sm:px-8">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -140,68 +138,53 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             </AnimatePresence>
           </div>
 
-          {/* 级联算式：C ×(Rw−Rf) ↓产出 被动收入 − H ＝ Fn
-              列2 承载 ×、↓、被动收入（同一中轴）；H 独占列4，左边界必在收益率框右侧 */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <div className="grid grid-cols-[auto_auto_auto_auto] items-center gap-x-2 gap-y-1">
-              {/* 上层：C × (Rw−Rf) */}
-              <div className="col-start-1 row-start-1">
-                <Key tone="gold" label="C·资本总量" value={fmtWan(p.C)} />
-              </div>
-              <div className="col-start-2 row-start-1 flex justify-center">
-                <Op>×</Op>
-              </div>
-              <div className="col-start-3 row-start-1">
-                <Key
-                  tone="mist"
-                  label={p.useInflation ? "Rw−Rf·实际收益率" : "Rw·名义收益率"}
-                  value={`${r.ratePct.toFixed(1)}%`}
-                  sub={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
-                />
-              </div>
-
-              {/* 产出箭头：位于 × 正下方（列2 中轴） */}
-              <div className="col-start-2 row-start-2 flex items-center justify-center gap-1.5 py-0.5">
-                <svg width="9" height="12" viewBox="0 0 9 12" aria-hidden className="text-gold-soft">
-                  <path
-                    d="M4.5 0v8M1.5 5.5 4.5 10l3-4.5"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-dim">产出</span>
-              </div>
-
-              {/* 中层：被动收入 − H（被动收入与箭头同轴，整体右移） */}
-              <div className="col-start-2 row-start-3 flex justify-center">
-                <Key tone={passiveCovers ? "jade" : "coral"} label="年被动收入" value={fmtWan(r.passive)} />
-              </div>
-              <div className="col-start-3 row-start-3 flex justify-center">
-                <Op>−</Op>
-              </div>
-              <div className="col-start-4 row-start-3">
-                <Key tone="coral" label="H·年开销" value={fmtWan(p.H)} />
-              </div>
+          {/* 账页：C × 实际收益率 → 被动收入 − H ＝ Fn */}
+          <div
+            className={`mt-6 w-full max-w-[430px] overflow-hidden rounded-lg border border-line-soft border-l-2 bg-pine-900/70 ${
+              free ? "border-l-jade" : "border-l-coral/80"
+            }`}
+          >
+            <div className="flex items-center justify-between border-b border-line-soft px-4 py-2">
+              <span className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-dim">
+                Derivation · 推演明细
+              </span>
+              <span className="font-mono text-[10px] text-dim">
+                {p.useInflation ? "Fn = C×(Rw−Rf)−H" : "Fn = C×Rw−H"}
+              </span>
             </div>
-
-            <div className="hidden h-20 w-px shrink-0 bg-gradient-to-b from-transparent via-line to-transparent sm:block" />
-
-            {/* 结果 */}
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-2xl font-bold text-dim">=</span>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className={`whitespace-nowrap font-mono text-[32px] font-bold leading-none tracking-tight ${fnColor}`}>
+            <div className="px-4 py-2">
+              <LedgerRow label="C · 资本总量" value={fmtWan(p.C)} tone="text-gold-soft" />
+              <LedgerRow
+                op="×"
+                label={p.useInflation ? "实际收益率 Rw − Rf" : "名义收益率 Rw"}
+                note={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
+                value={`${r.ratePct.toFixed(1)} %`}
+              />
+              <LedgerRule />
+              <LedgerRow
+                op="="
+                label="年被动收入"
+                value={fmtWan(r.passive)}
+                tone={passiveCovers ? "text-jade" : "text-coral"}
+              />
+              <LedgerRow op="−" label="H · 幸福感阈值 · 年开销" value={fmtWan(p.H)} tone="text-coral" />
+              <LedgerRule />
+              <div className="flex items-center gap-2.5 px-1.5 pb-1.5 pt-2.5">
+                <span className="w-4 shrink-0 text-center font-mono text-base font-bold text-dim">=</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-display text-[15px] tracking-wide text-cream">
+                    Fn · 财务自由指数
+                  </span>
+                  <span className={`block text-[10.5px] ${free ? "text-jade" : "text-coral"}`}>
+                    {free ? "为正 · 收益已覆盖全年开销" : "为正之前，仍需积累"}
+                  </span>
+                </span>
+                <span className="flex shrink-0 items-baseline gap-1.5">
+                  <span className={`font-mono text-[26px] font-bold leading-none tabular-nums ${fnColor}`}>
                     {fmtSignedWan(shown)}
                   </span>
-                  <span className="font-mono text-[11px] text-mist">元 / 年</span>
-                </div>
-                <div className="mt-1.5 text-[10.5px] tracking-wide text-dim">
-                  Fn · 自由指数 {free ? "· 为正即已自由" : "· 为正之前，继续积累"}
-                </div>
+                  <span className="font-mono text-[10.5px] text-dim">元/年</span>
+                </span>
               </div>
             </div>
           </div>
@@ -260,7 +243,7 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
                   ? "先让收益率为正"
                   : r.monthsCover >= 12
                     ? "被动收入已覆盖全年开销"
-                    : `相当于全年开销的 ${(r.monthsCover! / 12 * 100).toFixed(0)}%`
+                    : `相当于全年开销的 ${((r.monthsCover! / 12) * 100).toFixed(0)}%`
               }
               tone={r.monthsCover !== null && r.monthsCover >= 12 ? "text-jade" : "text-cream"}
             />

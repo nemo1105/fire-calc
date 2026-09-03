@@ -154,6 +154,27 @@ describe("fmtWan · 金额格式化", () => {
   it("负数", () => {
     expect(fmtWan(-250_000)).toBe("-25 万");
   });
+  it("万亿级（覆盖自由输入上限 10 万亿）", () => {
+    expect(fmtWan(1e12)).toBe("1 万亿");
+    expect(fmtWan(1.5e12)).toBe("1.5 万亿");
+    expect(fmtWan(10e12)).toBe("10 万亿");
+    expect(fmtWan(-2e12)).toBe("-2 万亿");
+  });
+});
+
+describe("自由输入上限内的极端取值", () => {
+  it("C=10万亿、Rw=1,000,000%、Rf=200% 时计算稳定且展示走万亿档", () => {
+    const r = computeResults({ C: 10e12, H: 300_000, Rw: 1_000_000, Rf: 200, useInflation: true, S: 0 });
+    expect(r.ratePct).toBe(999_800);
+    expect(r.fn).toBeCloseTo(10e12 * 9_998 - 300_000);
+    expect(r.status).toBe("free");
+    expect(fmtWan(r.passive)).toBe("99,980,000 万亿");
+  });
+  it("H=1万亿、C=0 时 Fn 为大额负数", () => {
+    const r = computeResults({ C: 0, H: 1e12, Rw: 8, Rf: 3, useInflation: true, S: 0 });
+    expect(r.fn).toBe(-1e12);
+    expect(fmtWan(Math.abs(r.fn))).toBe("1 万亿");
+  });
 });
 
 describe("fmtSignedWan · 带符号格式化", () => {

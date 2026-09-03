@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { PRESETS, fmtMoney, trimNum, type Params } from "../lib/finance";
+import { PRESETS, fmtWan, trimNum, type Params } from "../lib/finance";
 
 interface Props {
   p: Params;
@@ -24,12 +24,16 @@ function NumInput({
   value,
   decimals,
   disabled,
+  hardMax,
   onCommit,
+  onClamped,
 }: {
   value: number;
   decimals: number;
   disabled?: boolean;
+  hardMax?: number;
   onCommit: (v: number) => void;
+  onClamped?: () => void;
 }) {
   const [draft, setDraft] = useState<string | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -44,12 +48,22 @@ function NumInput({
 
   useEffect(() => clearTimer, []);
 
+  /** 自由输入上限：超出则截断到上限（仅约束键入，不影响滑杆量程） */
+  const applyCap = (n: number): number => {
+    if (hardMax != null && n > hardMax) {
+      onClamped?.();
+      return hardMax;
+    }
+    return n;
+  };
+
   /** 防抖提交：停止输入 200ms 后，合法数值自动生效并参与计算 */
   const scheduleCommit = (text: string) => {
     clearTimer();
     const raw = text.replace(/,/g, "").trim();
-    const v = Number(raw);
-    if (raw === "" || !Number.isFinite(v)) return; // 空 / 输入中途（如 "-" "3."）不提交
+    const parsed = Number(raw);
+    if (raw === "" || !Number.isFinite(parsed)) return; // 空 / 输入中途（如 "-" "3."）不提交
+    const v = applyCap(parsed);
     timerRef.current = window.setTimeout(() => {
       timerRef.current = null;
       if (v !== value) onCommit(v);
@@ -61,9 +75,11 @@ function NumInput({
     clearTimer();
     if (draft === null) return;
     const raw = draft.replace(/,/g, "").trim();
-    const v = Number(raw);
+    const parsed = Number(raw);
     setDraft(null);
-    if (raw !== "" && Number.isFinite(v) && v !== value) onCommit(v);
+    if (raw === "" || !Number.isFinite(parsed)) return;
+    const v = applyCap(parsed);
+    if (v !== value) onCommit(v);
   };
 
   return (
@@ -113,6 +129,8 @@ function Row({
   onChange,
   disabled = false,
   trackColor = "#e8b54a",
+  hardMax,
+  hardMaxLabel,
 }: {
   badge: string;
   badgeCls: string;
@@ -127,11 +145,20 @@ function Row({
   onChange: (v: number) => void;
   disabled?: boolean;
   trackColor?: string;
+  hardMax?: number;
+  hardMaxLabel?: string;
 }) {
   const clamped = Math.min(max, Math.max(min, value));
   const pct = Math.min(100, Math.max(0, ((clamped - min) / (max - min)) * 100));
   const outOfSlider = value < min || value > max;
   const style = { "--p": `${pct}%`, "--track-on": trackColor } as CSSProperties;
+
+  const [clampMsg, setClampMsg] = useState<string | null>(null);
+  useEffect(() => {
+    if (!clampMsg) return;
+    const t = window.setTimeout(() => setClampMsg(null), 2400);
+    return () => window.clearTimeout(t);
+  }, [clampMsg]);
   return (
     <div className={`group ${disabled ? "opacity-45" : ""} transition-opacity duration-300`}>
       <div className="mb-1 flex items-center gap-2.5">
@@ -140,14 +167,27 @@ function Row({
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-[13px] font-bold text-cream">{title}</span>
             <span className="flex items-baseline gap-1">
-              <NumInput value={value} decimals={decimals} disabled={disabled} onCommit={onChange} />
+              <NumInput
+                value={value}
+                decimals={decimals}
+                disabled={disabled}
+                hardMax={hardMax}
+                onCommit={onChange}
+                onClamped={() => setClampMsg(`已按输入上限截断为 ${hardMaxLabel ?? "上限"}`)}
+              />
               <span className="text-[11px] text-mist">{unit}</span>
             </span>
           </div>
           <p className="mt-0.5 text-[11px] leading-snug text-dim">
-            {hint}
-            {outOfSlider && !disabled && (
-              <span className="ml-1 font-mono text-[10px] text-gold-soft">· 已超出滑杆范围，数值仍可生效</span>
+            {clampMsg ? (
+              <span className="font-semibold text-gold-soft">{clampMsg}</span>
+            ) : (
+              <>
+                {hint}
+                {outOfSlider && !disabled && (
+                  <span className="ml-1 font-mono text-[10px] text-gold-soft">· 已超出滑杆范围，数值仍可生效</span>
+                )}
+              </>
             )}
           </p>
         </div>
@@ -225,6 +265,8 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           step={10}
           onChange={(v) => patch({ C: v * 1e4 })}
           trackColor="#e8b54a"
+          hardMax={1e9}
+          hardMaxLabel="10万亿"
         />
         <Row
           badge="H"
@@ -238,6 +280,8 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           step={1}
           onChange={(v) => patch({ H: v * 1e4 })}
           trackColor="#f2695c"
+          hardMax={1e8}
+          hardMaxLabel="1万亿"
         />
         <Row
           badge="Rw"
@@ -252,6 +296,8 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           decimals={1}
           onChange={(v) => patch({ Rw: v })}
           trackColor="#43d98c"
+          hardMax={1000000}
+          hardMaxLabel="1,000,000%"
         />
 
         {/* 通胀开关 */}
@@ -290,6 +336,8 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           disabled={!p.useInflation}
           onChange={(v) => patch({ Rf: v })}
           trackColor="#9ab5a8"
+          hardMax={200}
+          hardMaxLabel="200%"
         />
 
         <div className="rounded-md border border-dashed border-line bg-pine-900/50 px-3.5 py-3">
@@ -309,10 +357,12 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
               step={500}
               onChange={(v) => patch({ S: v })}
               trackColor="#9ab5a8"
+              hardMax={10000000}
+              hardMaxLabel="1,000万"
             />
           </div>
           <p className="mt-2 font-mono text-[11px] text-mist">
-            当前年储蓄 ≈ <b className="text-gold-soft">{fmtMoney(p.S * 12)}</b>
+            当前年储蓄 ≈ <b className="text-gold-soft">{fmtWan(p.S * 12)}</b>
           </p>
         </div>
       </div>
@@ -320,6 +370,9 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
       <div className="border-t border-line-soft px-5 py-3">
         <p className="text-[10.5px] leading-relaxed text-dim">
           公式出自公众号「琳时闲话」《你距离“财务自由”有多远？》。若 Fn 为正，资本收益已覆盖生活开销——你自由了。
+        </p>
+        <p className="mt-1.5 font-mono text-[9.5px] leading-relaxed text-dim/80">
+          自由输入上限：C ≤ 10万亿 · H ≤ 1万亿 · Rw ≤ 1,000,000% · Rf ≤ 200% · 月储蓄 ≤ 1,000万
         </p>
       </div>
     </aside>
