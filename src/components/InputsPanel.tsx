@@ -369,7 +369,7 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
 
       <div className="border-t border-line-soft px-5 py-3">
         <p className="text-[10.5px] leading-relaxed text-dim">
-          「琳时闲话」《你距离“财务自由”有多远？》。若 Fn 为正，资本收益已覆盖生活开销——你自由了。
+          若 Fn 为正，资本收益已覆盖生活开销——你自由了。
         </p>
         <p className="mt-1.5 font-mono text-[9.5px] leading-relaxed text-dim/80">
           自由输入上限：C ≤ 10万亿 · H ≤ 1万亿 · Rw ≤ 1,000,000% · Rf ≤ 200% · 月储蓄 ≤ 1,000万
