@@ -9,6 +9,7 @@ import SensitivityGrid from "./components/SensitivityGrid";
 import TiersLadder from "./components/TiersLadder";
 import Footer from "./components/Footer";
 import { PRESETS, computeResults, type Params } from "./lib/finance";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
 
 const DEFAULTS: Params = PRESETS[0].values;
 
@@ -28,11 +29,12 @@ function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; 
 
 /** 环境背景：账本网格 + 双侧光晕 + 竖排水印 + 漂浮符号 */
 function Ambient() {
+  const { lang } = useLanguage();
   const floats = [
-    { ch: "¥", cls: "left-[6%] top-[18%] text-gold/20 text-5xl", d: "0s" },
-    { ch: "¥", cls: "left-[12%] bottom-[16%] text-jade/15 text-3xl", d: "-4s" },
+    { ch: lang === "zh" ? "¥" : "$", cls: "left-[6%] top-[18%] text-gold/20 text-5xl", d: "0s" },
+    { ch: lang === "zh" ? "¥" : "$", cls: "left-[12%] bottom-[16%] text-jade/15 text-3xl", d: "-4s" },
     { ch: "%", cls: "right-[16%] top-[30%] text-mist/15 text-4xl", d: "-7s" },
-    { ch: "¥", cls: "left-[46%] top-[64%] text-gold/10 text-6xl", d: "-2.5s" },
+    { ch: lang === "zh" ? "¥" : "$", cls: "left-[46%] top-[64%] text-gold/10 text-6xl", d: "-2.5s" },
     { ch: "+", cls: "right-[38%] bottom-[10%] text-jade/15 text-4xl", d: "-9s" },
   ];
   return (
@@ -47,7 +49,7 @@ function Ambient() {
         style={{ background: "radial-gradient(circle, rgba(67,217,140,0.08) 0%, transparent 62%)" }}
       />
       <div className="wm-vertical absolute right-2 top-1/2 -translate-y-1/2 select-none font-display text-[150px] leading-none tracking-[0.2em] text-cream/[0.035] sm:text-[190px]">
-        财务自由
+        {lang === "zh" ? "财务自由" : "FIRE"}
       </div>
       {floats.map((f, i) => (
         <span
@@ -62,7 +64,8 @@ function Ambient() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  const { lang } = useLanguage();
   const [p, setP] = useState<Params>(DEFAULTS);
   const [activePreset, setActivePreset] = useState<string | null>(PRESETS[0].id);
 
@@ -145,5 +148,13 @@ export default function App() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
