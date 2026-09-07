@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import Header from "./components/Header";
 import Ticker from "./components/Ticker";
@@ -65,6 +65,12 @@ function Ambient() {
 export default function App() {
   const [p, setP] = useState<Params>(DEFAULTS);
   const [activePreset, setActivePreset] = useState<string | null>(PRESETS[0].id);
+
+  // React 挂载后隐藏 SEO 静态内容（避免重复显示）
+  useEffect(() => {
+    const seo = document.getElementById("seo-content");
+    if (seo) seo.style.display = "none";
+  }, []);
 
   const result = useMemo(() => computeResults(p), [p]);
 

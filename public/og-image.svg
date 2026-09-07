@@ -1,0 +1,44 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06140f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0b2019;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e8b54a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f3d488;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="120" r="80" fill="#43d98c" opacity="0.08"/>
+  <circle cx="1050" cy="510" r="100" fill="#e8b54a" opacity="0.06"/>
+  <rect x="80" y="480" width="200" height="2" fill="#43d98c" opacity="0.3"/>
+  <rect x="920" y="150" width="180" height="2" fill="#e8b54a" opacity="0.3"/>
+  
+  <!-- Main formula -->
+  <text x="600" y="240" font-family="monospace" font-size="72" font-weight="bold" fill="url(#accent)" text-anchor="middle">
+    Fn = C × (Rw − Rf) − H
+  </text>
+  
+  <!-- Chinese title -->
+  <text x="600" y="340" font-family="sans-serif" font-size="56" font-weight="900" fill="#f1eada" text-anchor="middle">
+    财务自由计算器
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="400" font-family="sans-serif" font-size="28" fill="#9ab5a8" text-anchor="middle">
+    输入四个变量，即刻得出自由指数
+  </text>
+  
+  <!-- Bottom accent line -->
+  <rect x="450" y="440" width="300" height="3" fill="#43d98c" opacity="0.6"/>
+  
+  <!-- Small decorative text -->
+  <text x="600" y="520" font-family="monospace" font-size="18" fill="#64826f" text-anchor="middle">
+    Financial Freedom Index Calculator
+  </text>
+</svg>
