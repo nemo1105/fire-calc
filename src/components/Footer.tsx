@@ -12,9 +12,6 @@ export default function Footer() {
               <span className="text-gold-soft">免于恐惧</span>，求得一个
               <span className="text-jade">心中安稳</span>而已。
             </p>
-            <cite className="mt-3 block font-mono text-[11px] not-italic tracking-[0.2em] text-dim">
-              —— 琳时闲话《你距离“财务自由”有多远？》
-            </cite>
           </blockquote>
 
           <div className="space-y-4 text-[12.5px] leading-relaxed text-mist">
@@ -27,7 +24,7 @@ export default function Footer() {
               </ul>
             </div>
             <p className="text-[11px] leading-relaxed text-dim">
-              本工具仅基于文章公式做数学推演，不构成任何投资建议。若多少金钱都难以解除焦虑——金钱解决不了的问题，答案也只会在金钱之外。
+              本工具仅基于公式做数学推演，不构成任何投资建议。若多少金钱都难以解除焦虑——金钱解决不了的问题，答案也只会在金钱之外。
             </p>
           </div>
         </div>
