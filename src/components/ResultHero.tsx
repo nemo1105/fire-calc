@@ -195,7 +195,7 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
             {free ? (
               <>
                 你的资本收益在覆盖全年开销后，每年还富余{" "}
-                <b className="text-jade">{fmtWan(r.fn)}</b>——按文章的定义，这一刻你已财务自由。
+                <b className="text-jade">{fmtWan(r.fn)}</b>——这一刻你已财务自由。
               </>
             ) : (
               <>
