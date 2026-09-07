@@ -3,23 +3,185 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>财务自由计算器 · Fn = C×(Rw−Rf)−H</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>财务自由计算器 | Fn = C×(Rw−Rf)−H | 输入四个变量即刻得出自由指数</title>
+    <meta name="title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
+    <meta name="description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入资本总量、年开销、投资收益率、通胀率，即刻得出是否已自由、还需多少资本、几年可达自由。支持资产推演、敏感性分析、自由段位阶梯。" />
+    <meta name="keywords" content="财务自由, FIRE, 财务自由计算器, 被动收入, 投资收益, 通胀率, 自由指数, Fn, 资本总量, 年开销, 收益率, 资产推演" />
+    <meta name="author" content="基于公众号「琳时闲话」《你距离'财务自由'有多远？》" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Chinese" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="./" />
+    <meta property="og:title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
+    <meta property="og:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。" />
+    <meta property="og:image" content="./og-image.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="财务自由计算器" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="./" />
+    <meta name="twitter:title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
+    <meta name="twitter:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。" />
+    <meta name="twitter:image" content="./og-image.svg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>" />
+    
+    <!-- Font Preload -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap" as="style" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap"
       rel="stylesheet"
     />
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "财务自由计算器",
+      "alternateName": "Financial Freedom Calculator",
+      "url": "./",
+      "description": "基于公式 Fn = C×(Rw−Rf)−H 计算财务自由指数。输入资本总量、年开销、投资收益率、通胀率，即刻得出是否已自由、还需多少资本、几年可达自由。",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareHelp": {
+        "@type": "CreativeWork",
+        "url": "./README.md"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CNY"
+      },
+      "featureList": [
+        "财务自由指数 Fn 计算",
+        "资产推演图（60年资产曲线与自由线交汇点）",
+        "Rw×Rf 敏感性沙盘",
+        "九段自由阶梯",
+        "Fuck You 基金计算",
+        "预设场景（经典案例、低物欲、体面中产、高配人生）"
+      ],
+      "author": {
+        "@type": "Organization",
+        "name": "基于公众号「琳时闲话」文章"
       }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "什么是财务自由指数 Fn？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "财务自由指数 Fn = C×(Rw−Rf)−H，其中 C 是资本总量，Rw 是投资收益率，Rf 是通胀率，H 是年开销。当 Fn 为正时，表示资本收益已覆盖生活开销，即已实现财务自由。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何计算财务自由？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "输入你的资本总量（C）、年开销（H）、投资收益率（Rw）和通胀率（Rf），计算器会自动得出 Fn 值。Fn 为正即已自由；Fn 为负则显示还需多少资本、几年可达自由。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "什么是 Fuck You 基金？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Fuck You 基金约等于 2 年的年开销，是成年人免于恐惧的底气——随时可以对不想做的事情说「不」。"
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; }
+      .seo-content { max-width: 800px; margin: 0 auto; padding: 40px 20px; font-family: 'Noto Sans SC', sans-serif; color: #f1eada; background: #06140f; }
+      .seo-content h1 { font-size: 2em; color: #f3d488; margin-bottom: 0.5em; }
+      .seo-content h2 { font-size: 1.5em; color: #e8b54a; margin-top: 1.5em; }
+      .seo-content p { line-height: 1.8; color: #9ab5a8; }
+      .seo-content .formula { font-family: 'IBM Plex Mono', monospace; font-size: 1.2em; color: #43d98c; background: #0b2019; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+      .seo-content .vars { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+      .seo-content .var { background: #0b2019; padding: 15px; border-radius: 6px; border-left: 3px solid #e8b54a; }
+      .seo-content .var strong { color: #f3d488; display: block; margin-bottom: 5px; }
     </style>
   </head>
   <body>
+    <!-- SEO Content (visible to crawlers, replaced by React on mount) -->
+    <div id="seo-content" class="seo-content">
+      <h1>财务自由计算器</h1>
+      <p>基于公式 <strong>Fn = C × (Rw − Rf) − H</strong> 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。</p>
+      
+      <div class="formula">
+        Fn = C × (Rw − Rf) − H
+      </div>
+      
+      <h2>公式说明</h2>
+      <div class="vars">
+        <div class="var">
+          <strong>C · 资本总量</strong>
+          可用于投资产生收益的财富（现金、基金、收租资产等）
+        </div>
+        <div class="var">
+          <strong>H · 幸福感阈值</strong>
+          维持你体面生活所必须的年净开销
+        </div>
+        <div class="var">
+          <strong>Rw · 投资收益率</strong>
+          银行理财、股票基金、房屋租金等综合年化收益
+        </div>
+        <div class="var">
+          <strong>Rf · 社会通胀率</strong>
+          你的财富总量被稀释的速度
+        </div>
+      </div>
+      
+      <h2>核心功能</h2>
+      <ul style="color: #9ab5a8; line-height: 2;">
+        <li><strong style="color: #f3d488;">财务自由指数 Fn</strong>：当 Fn 为正，资本收益已覆盖生活开销——你自由了</li>
+        <li><strong style="color: #f3d488;">所需资本 C*</strong>：告诉你还差多少钱才能达到自由</li>
+        <li><strong style="color: #f3d488;">资产推演图</strong>：按实际收益率推演 60 年资产曲线与自由线的交汇点</li>
+        <li><strong style="color: #f3d488;">Rw×Rf 敏感性沙盘</strong>：点击任意格子试算，直观展示通胀是沉默的财富小偷</li>
+        <li><strong style="color: #f3d488;">九段自由阶梯</strong>：从菜场自由到终极自由，按资本点亮</li>
+        <li><strong style="color: #f3d488;">Fuck You 基金</strong>：约 2 年开销，随时对生活说「不」的底气</li>
+      </ul>
+      
+      <h2>预设场景</h2>
+      <ul style="color: #9ab5a8; line-height: 2;">
+        <li><strong>经典案例</strong>：1000万资本 · 年开销30万 · 收益9% · 通胀3%</li>
+        <li><strong>低物欲生活</strong>：控制物欲，离自由更近一步</li>
+        <li><strong>体面中产</strong>：维持良好生活质量的年开销</li>
+        <li><strong>高配人生</strong>：更高的幸福阈值，更大的资本盘</li>
+      </ul>
+      
+      <h2>关于</h2>
+      <p>公式出自公众号「琳时闲话」《你距离"财务自由"有多远？》。</p>
+      <p style="color: #e8b54a; font-style: italic; margin-top: 20px;">
+        "金钱解决不了的问题，答案在金钱之外。"<br/>
+        "免于恐惧，求得一个心中安稳。"
+      </p>
+    </div>
+    
+    <!-- React App Root -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
