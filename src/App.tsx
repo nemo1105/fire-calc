@@ -105,7 +105,7 @@ export default function App() {
               </h2>
               <p className="mt-2 text-[13px] leading-relaxed text-mist">
                 调一调四个变量：当 <b className="font-mono text-cream">Fn</b> 为正，资本收益已能覆盖体面生活的开销——
-                那一刻，你便获得了文章所说的财务自由。
+                那一刻，你便获得了财务自由。
               </p>
             </div>
             <div className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.2em] text-dim">
