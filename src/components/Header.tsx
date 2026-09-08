@@ -1,7 +1,10 @@
 import { fmtSignedWan } from "../lib/finance";
 import { useAnimatedNumber } from "../lib/useAnimatedNumber";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 
 function Seal() {
+  const { lang } = useLanguage();
   return (
     <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden>
       <rect x="2" y="2" width="48" height="48" rx="6" fill="#e8b54a" />
@@ -14,22 +17,32 @@ function Seal() {
         fontSize="24"
         fill="#0b2019"
       >
-        自由
+        {lang === "zh" ? "自由" : "FREE"}
       </text>
     </svg>
   );
 }
 
-const VARS: { k: string; label: string; cls: string }[] = [
+const VARS_ZH: { k: string; label: string; cls: string }[] = [
   { k: "C", label: "资本总量", cls: "text-gold-soft" },
   { k: "H", label: "幸福感阈值 · 年开销", cls: "text-coral" },
   { k: "Rw", label: "投资收益率", cls: "text-jade" },
   { k: "Rf", label: "社会通胀率", cls: "text-mist" },
 ];
 
+const VARS_EN: { k: string; label: string; cls: string }[] = [
+  { k: "C", label: "Total Capital", cls: "text-gold-soft" },
+  { k: "H", label: "Happiness Threshold", cls: "text-coral" },
+  { k: "Rw", label: "Investment Return", cls: "text-jade" },
+  { k: "Rf", label: "Social Inflation", cls: "text-mist" },
+];
+
 export default function Header({ fn }: { fn: number }) {
+  const { lang, toggleLang } = useLanguage();
   const shown = useAnimatedNumber(fn);
   const positive = fn >= 0;
+  const VARS = lang === "zh" ? VARS_ZH : VARS_EN;
+  
   return (
     <header className="relative z-10 border-b border-line-soft">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-4 px-5 py-5 sm:px-8">
@@ -39,10 +52,10 @@ export default function Header({ fn }: { fn: number }) {
           </div>
           <div>
             <h1 className="font-display text-[26px] leading-none tracking-wide text-cream sm:text-[32px]">
-              财务自由计算器
+              {lang === "zh" ? "财务自由计算器" : "Financial Freedom Calculator"}
             </h1>
             <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-dim">
-              F · I · R · E&nbsp;&nbsp;Freedom Index Calculator
+              F · I · R · E&nbsp;&nbsp;{lang === "zh" ? "Freedom Index Calculator" : "Freedom Index Calculator"}
             </p>
           </div>
         </div>
@@ -68,13 +81,22 @@ export default function Header({ fn }: { fn: number }) {
         </div>
 
         <div className="ml-auto flex items-center gap-3">
+          {/* 语言切换按钮 */}
+          <button
+            onClick={toggleLang}
+            className="rounded-md border border-line bg-pine-900/80 px-3 py-2 font-mono text-xs font-semibold text-cream transition-colors hover:border-gold/60 hover:bg-pine-800"
+            aria-label={lang === "zh" ? "Switch to English" : "切换到中文"}
+          >
+            {lang === "zh" ? "EN" : "中文"}
+          </button>
+          
           <div
             className={`rounded-md border px-4 py-2 text-right transition-colors duration-500 ${
               positive ? "border-jade/50 bg-jade/10" : "border-coral/50 bg-coral/10"
             }`}
           >
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-dim">
-              自由指数 · 实时
+              {lang === "zh" ? "自由指数 · 实时" : "Freedom Index · Live"}
             </div>
             <div
               className={`font-mono text-lg font-bold leading-tight ${
@@ -82,7 +104,7 @@ export default function Header({ fn }: { fn: number }) {
               }`}
             >
               {fmtSignedWan(shown)}
-              <span className="ml-1 text-[11px] font-medium text-mist">/年</span>
+              <span className="ml-1 text-[11px] font-medium text-mist">{lang === "zh" ? "/年" : "/yr"}</span>
             </div>
           </div>
         </div>

@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Params, Result } from "../lib/finance";
 import { fmtSignedWan, fmtWan } from "../lib/finance";
 import { useAnimatedNumber } from "../lib/useAnimatedNumber";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 
 function Corners() {
   const c = "absolute h-3.5 w-3.5 border-gold/70";
@@ -106,6 +108,7 @@ function Stat({ label, value, sub, tone = "text-cream" }: { label: string; value
 }
 
 export default function ResultHero({ p, r }: { p: Params; r: Result }) {
+  const { lang } = useLanguage();
   const shown = useAnimatedNumber(r.fn);
   const free = r.status === "free";
   const stamp = STAMP[r.status];
@@ -123,7 +126,7 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
               <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-dim">
                 Financial Freedom Index
               </div>
-              <h2 className="font-display text-xl tracking-wide text-cream">财务自由指数 Fn</h2>
+              <h2 className="font-display text-xl tracking-wide text-cream">{t(lang, "financialFreedomIndex")}</h2>
             </div>
             <AnimatePresence mode="popLayout">
               <motion.div
@@ -134,8 +137,8 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
                 transition={{ type: "spring", stiffness: 380, damping: 17 }}
                 className={`rounded border-2 px-3 py-1.5 text-center ${stamp.border} ${stamp.cls} bg-pine-950/60`}
               >
-                <div className="font-display text-lg leading-none tracking-widest">{stamp.zh}</div>
-                <div className="mt-0.5 font-mono text-[9px] tracking-[0.3em]">{stamp.en}</div>
+                <div className="font-display text-lg leading-none tracking-widest">{lang === "zh" ? stamp.zh : stamp.en}</div>
+                <div className="mt-0.5 font-mono text-[9px] tracking-[0.3em]">{lang === "zh" ? stamp.en : stamp.zh}</div>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -148,44 +151,44 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
           >
             <div className="flex items-center justify-between border-b border-line-soft px-4 py-2">
               <span className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-dim">
-                Derivation · 推演明细
+                {lang === "zh" ? "Derivation · 推演明细" : "Derivation"}
               </span>
               <span className="font-mono text-[10px] text-dim">
                 {p.useInflation ? "Fn = C×(Rw−Rf)−H" : "Fn = C×Rw−H"}
               </span>
             </div>
             <div className="px-4 py-2">
-              <LedgerRow label="C · 资本总量" value={fmtWan(p.C)} tone="text-gold-soft" />
+              <LedgerRow label={t(lang, "capitalLabel")} value={fmtWan(p.C)} tone="text-gold-soft" />
               <LedgerRow
                 op="×"
-                label={p.useInflation ? "实际收益率 Rw − Rf" : "名义收益率 Rw"}
+                label={p.useInflation ? (lang === "zh" ? "实际收益率 Rw − Rf" : "Actual Return Rw − Rf") : (lang === "zh" ? "名义收益率 Rw" : "Nominal Return Rw")}
                 note={p.useInflation ? `${p.Rw}% − ${p.Rf}%` : `Rw ${p.Rw}%`}
                 value={`${r.ratePct.toFixed(1)} %`}
               />
               <LedgerRule />
               <LedgerRow
                 op="="
-                label="年被动收入"
+                label={t(lang, "annualPassive")}
                 value={fmtWan(r.passive)}
                 tone={passiveCovers ? "text-jade" : "text-coral"}
               />
-              <LedgerRow op="−" label="H · 幸福感阈值 · 年开销" value={fmtWan(p.H)} tone="text-coral" />
+              <LedgerRow op="−" label={t(lang, "annualExpense")} value={fmtWan(p.H)} tone="text-coral" />
               <LedgerRule />
               <div className="flex items-center gap-2.5 px-1.5 pb-1.5 pt-2.5">
                 <span className="w-6 shrink-0 text-center font-mono text-[21px] font-bold leading-none text-gold">=</span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-display text-[15px] tracking-wide text-cream">
-                    Fn · 财务自由指数
+                    {t(lang, "fnResult")}
                   </span>
                   <span className={`block text-[10.5px] ${free ? "text-jade" : "text-coral"}`}>
-                    {free ? "为正 · 收益已覆盖全年开销" : "为正之前，仍需积累"}
+                    {free ? t(lang, "freeNote") : t(lang, "notFreeNote")}
                   </span>
                 </span>
                 <span className="flex shrink-0 items-baseline gap-1.5">
                   <span className={`font-mono text-[26px] font-bold leading-none tabular-nums ${fnColor}`}>
                     {fmtSignedWan(shown)}
                   </span>
-                  <span className="font-mono text-[10.5px] text-dim">元/年</span>
+                  <span className="font-mono text-[10.5px] text-dim">{lang === "zh" ? "元/年" : "/yr"}</span>
                 </span>
               </div>
             </div>
@@ -194,23 +197,22 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
           <p className="mt-5 max-w-xl text-[13px] leading-relaxed text-mist">
             {free ? (
               <>
-                你的资本收益在覆盖全年开销后，每年还富余{" "}
-                <b className="text-jade">{fmtWan(r.fn)}</b>——这一刻你已财务自由。
+                {t(lang, "freeDesc")} <b className="text-jade">{fmtWan(r.fn)}</b>{lang === "zh" ? "——这一刻你已财务自由。" : " — you are financially free."}
               </>
             ) : (
               <>
-                距离自由每年还差 <b className="text-coral">{fmtWan(Math.abs(r.fn))}</b>，目标资本{" "}
+                {t(lang, "notFreeDesc")} <b className="text-coral">{fmtWan(Math.abs(r.fn))}</b>{lang === "zh" ? "，目标资本" : ", target capital"}{" "}
                 <b className="text-gold-soft">
                   {Number.isFinite(r.required) ? fmtWan(r.required) : "∞"}
                 </b>
-                。降低 H、提高 Rw，或继续积累 C，都能加速抵达。
+                {lang === "zh" ? "。降低 H、提高 Rw，或继续积累 C，都能加速抵达。" : ". " + t(lang, "accelerate")}
               </>
             )}
           </p>
 
           {p.useInflation && r.ratePct <= 0 && (
             <p className="mt-3 rounded border border-coral/50 bg-coral/10 px-3 py-2 text-[12px] text-coral">
-              ⚠ 收益率跑不赢通胀（Rw ≤ Rf），资本购买力正在缩水——先让收益跑赢印钞机。
+              {t(lang, "inflationWarning")}
             </p>
           )}
         </div>
@@ -220,39 +222,39 @@ export default function ResultHero({ p, r }: { p: Params; r: Result }) {
           <Gauge coverage={r.coverage} free={free} />
           <div className="mt-5 space-y-2.5">
             <Stat
-              label="所需资本 C* = H/(Rw−Rf)"
+              label={t(lang, "requiredCapitalLabel")}
               value={Number.isFinite(r.required) ? fmtWan(r.required) : "∞"}
               sub={
                 Number.isFinite(r.required) && r.required > p.C
-                  ? `还差 ${fmtWan(r.required - p.C)}`
+                  ? `${lang === "zh" ? "还差" : t(lang, "stillNeed")} ${fmtWan(r.required - p.C)}`
                   : Number.isFinite(r.required)
-                    ? "已达标"
-                    : "收益 ≤ 通胀，无解"
+                    ? t(lang, "achieved")
+                    : t(lang, "noSolution")
               }
               tone="text-gold-soft"
             />
             <Stat
-              label="被动收入覆盖力"
+              label={t(lang, "passiveCoverage")}
               value={
                 r.monthsCover === null
-                  ? "无正收益"
+                  ? t(lang, "noPositiveReturn")
                   : r.monthsCover >= 12
-                    ? "≥ 12 个月"
-                    : `${r.monthsCover.toFixed(1)} 个月`
+                    ? (lang === "zh" ? "≥ 12 个月" : "≥ 12 months")
+                    : `${r.monthsCover.toFixed(1)} ${t(lang, "months")}`
               }
               sub={
                 r.monthsCover === null
-                  ? "先让收益率为正"
+                  ? t(lang, "coverageDesc1")
                   : r.monthsCover >= 12
-                    ? "被动收入已覆盖全年开销"
-                    : `相当于全年开销的 ${((r.monthsCover! / 12) * 100).toFixed(0)}%`
+                    ? t(lang, "coverageDesc2")
+                    : `${t(lang, "coverageDesc3")} ${((r.monthsCover! / 12) * 100).toFixed(0)}%`
               }
               tone={r.monthsCover !== null && r.monthsCover >= 12 ? "text-jade" : "text-cream"}
             />
             <Stat
-              label="Fuck You 基金 ≈ 2年开销"
+              label={t(lang, "fyFund")}
               value={fmtWan(r.fyFund)}
-              sub="随时对生活说「不」的底气"
+              sub={t(lang, "fyFundDesc")}
             />
           </div>
         </div>

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { PRESETS, fmtWan, trimNum, type Params } from "../lib/finance";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 
 interface Props {
   p: Params;
@@ -209,20 +211,22 @@ function Row({
 }
 
 export default function InputsPanel({ p, patch, activePreset, onPreset }: Props) {
+  const { lang } = useLanguage();
+  
   return (
     <aside className="rounded-lg border border-line bg-pine-850/90 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
       <div className="flex items-center justify-between border-b border-line-soft px-5 py-3.5">
-        <h2 className="font-display text-lg tracking-wide text-cream">参数 · 四个变量</h2>
+        <h2 className="font-display text-lg tracking-wide text-cream">{t(lang, "inputsTitle")}</h2>
         <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-dim">Inputs</span>
       </div>
       <p className="border-b border-dashed border-line-soft bg-pine-900/40 px-5 py-2 text-[10.5px] leading-snug text-dim">
-        拖动滑杆快捷调节 · 点击数字可自由编辑——支持清空重输与负数，回车确认 / Esc 取消
+        {t(lang, "inputsSubtitle")}
       </p>
 
       {/* 预设场景 */}
       <div className="px-5 pt-4">
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-dim">
-          预设场景 · Presets
+          {t(lang, "presetsTitle")}
         </p>
         <div className="grid grid-cols-2 gap-2">
           {PRESETS.map((pre) => {
@@ -240,11 +244,11 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
                 <span
                   className={`block text-[13px] font-bold ${active ? "text-gold-soft" : "text-cream"}`}
                 >
-                  {pre.name}
+                  {t(lang, `preset${pre.id.charAt(0).toUpperCase() + pre.id.slice(1)}` as any)}
                   {active && <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-gold blink-soft" />}
                 </span>
                 <span className="mt-0.5 block text-[10.5px] leading-snug text-dim transition-colors group-hover/p:text-mist">
-                  {pre.desc}
+                  {t(lang, `preset${pre.id.charAt(0).toUpperCase() + pre.id.slice(1)}Desc` as any)}
                 </span>
               </button>
             );
@@ -256,9 +260,9 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
         <Row
           badge="C"
           badgeCls="border-gold/50 bg-gold/10 text-gold-soft"
-          title="资本总量"
-          hint="可用于投资产生收益的财富（现金、基金、收租资产等）"
-          unit="万元"
+          title={t(lang, "capitalTotal")}
+          hint={t(lang, "capitalHint")}
+          unit={t(lang, "capitalUnit")}
           value={p.C / 1e4}
           min={0}
           max={5000}
@@ -266,14 +270,14 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           onChange={(v) => patch({ C: v * 1e4 })}
           trackColor="#e8b54a"
           hardMax={1e9}
-          hardMaxLabel="10万亿"
+          hardMaxLabel={lang === "zh" ? "10万亿" : "10T"}
         />
         <Row
           badge="H"
           badgeCls="border-coral/50 bg-coral/10 text-coral"
-          title="幸福感阈值 · 年开销"
-          hint="维持你体面生活所必须的年净开销"
-          unit="万元/年"
+          title={t(lang, "happinessThreshold")}
+          hint={t(lang, "happinessHint")}
+          unit={t(lang, "happinessUnit")}
           value={p.H / 1e4}
           min={1}
           max={200}
@@ -281,14 +285,14 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
           onChange={(v) => patch({ H: v * 1e4 })}
           trackColor="#f2695c"
           hardMax={1e8}
-          hardMaxLabel="1万亿"
+          hardMaxLabel={lang === "zh" ? "1万亿" : "1T"}
         />
         <Row
           badge="Rw"
           badgeCls="border-jade/50 bg-jade/10 text-jade"
-          title="投资收益率"
-          hint="银行理财、股票基金、房屋租金等综合年化收益"
-          unit="%"
+          title={t(lang, "investmentReturn")}
+          hint={t(lang, "investmentHint")}
+          unit={t(lang, "investmentUnit")}
           value={p.Rw}
           min={0}
           max={15}
@@ -303,8 +307,8 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
         {/* 通胀开关 */}
         <div className="flex items-center justify-between rounded-md border border-line-soft bg-pine-900/60 px-3 py-2.5">
           <div>
-            <p className="text-[13px] font-bold text-cream">考虑通胀稀释</p>
-            <p className="text-[11px] text-dim">关闭后公式简化为 Fn = C×Rw − H</p>
+            <p className="text-[13px] font-bold text-cream">{t(lang, "considerInflation")}</p>
+            <p className="text-[11px] text-dim">{t(lang, "inflationOff")}</p>
           </div>
           <button
             role="switch"
@@ -325,9 +329,9 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
         <Row
           badge="Rf"
           badgeCls="border-line bg-pine-900 text-mist"
-          title="社会通胀率"
-          hint="你的财富总量被稀释的速度"
-          unit="%"
+          title={t(lang, "inflationRate")}
+          hint={t(lang, "inflationHint")}
+          unit={t(lang, "inflationUnit")}
           value={p.Rf}
           min={0}
           max={10}
@@ -342,15 +346,15 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
 
         <div className="rounded-md border border-dashed border-line bg-pine-900/50 px-3.5 py-3">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-dim">
-            推演辅助 · 每月储蓄
+            {t(lang, "monthlySavings")}
           </p>
           <div className="mt-2">
             <Row
               badge="S"
               badgeCls="border-line bg-pine-800 text-cream"
-              title="每月新增储蓄"
-              hint="仅用于下方资产推演图，不计入 Fn 公式"
-              unit="元/月"
+              title={t(lang, "monthlySavingsTitle")}
+              hint={t(lang, "monthlySavingsHint")}
+              unit={t(lang, "monthlySavingsUnit")}
               value={p.S}
               min={0}
               max={50000}
@@ -358,21 +362,21 @@ export default function InputsPanel({ p, patch, activePreset, onPreset }: Props)
               onChange={(v) => patch({ S: v })}
               trackColor="#9ab5a8"
               hardMax={10000000}
-              hardMaxLabel="1,000万"
+              hardMaxLabel={lang === "zh" ? "1,000万" : "10M"}
             />
           </div>
           <p className="mt-2 font-mono text-[11px] text-mist">
-            当前年储蓄 ≈ <b className="text-gold-soft">{fmtWan(p.S * 12)}</b>
+            {t(lang, "currentAnnualSavings")} <b className="text-gold-soft">{fmtWan(p.S * 12)}</b>
           </p>
         </div>
       </div>
 
       <div className="border-t border-line-soft px-5 py-3">
         <p className="text-[10.5px] leading-relaxed text-dim">
-          若 Fn 为正，资本收益已覆盖生活开销——你自由了。
+          {t(lang, "fnPositive")}
         </p>
         <p className="mt-1.5 font-mono text-[9.5px] leading-relaxed text-dim/80">
-          自由输入上限：C ≤ 10万亿 · H ≤ 1万亿 · Rw ≤ 1,000,000% · Rf ≤ 200% · 月储蓄 ≤ 1,000万
+          {t(lang, "inputLimits")}
         </p>
       </div>
     </aside>
