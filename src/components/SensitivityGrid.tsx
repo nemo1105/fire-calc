@@ -1,4 +1,6 @@
 import { SENS_RFS, SENS_RWS, fmtSignedWan, sensitivityFn } from "../lib/finance";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../lib/i18n";
 
 interface Props {
   C: number;
@@ -9,6 +11,7 @@ interface Props {
 }
 
 export default function SensitivityGrid({ C, H, Rw, Rf, onPick }: Props) {
+  const { lang } = useLanguage();
   const cells = SENS_RFS.flatMap((rf) => SENS_RWS.map((rw) => ({ rw, rf, v: sensitivityFn(C, H, rw, rf) })));
   const maxAbs = Math.max(...cells.map((c) => Math.abs(c.v)), 1);
 
@@ -20,9 +23,9 @@ export default function SensitivityGrid({ C, H, Rw, Rf, onPick }: Props) {
     <section className="rounded-lg border border-line bg-pine-850/90 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.35)] sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="font-display text-lg tracking-wide text-cream">Rw × Rf 敏感性沙盘</h3>
+          <h3 className="font-display text-lg tracking-wide text-cream">{t(lang, "sensitivityTitle")}</h3>
           <p className="mt-0.5 text-[11.5px] text-dim">
-            按完整公式 Fn = C×(Rw−Rf)−H 推演 · <span className="text-gold-soft">点击任意格子试算</span>
+            {t(lang, "sensitivitySubtitle")}
           </p>
         </div>
         <div className="flex items-center gap-3 font-mono text-[10.5px] text-mist">
@@ -40,12 +43,12 @@ export default function SensitivityGrid({ C, H, Rw, Rf, onPick }: Props) {
             </div>
           ))}
           {SENS_RFS.map((rf) => (
-            <RowCells key={rf} rf={rf} C={C} H={H} curRw={curRw} curRf={curRf} maxAbs={maxAbs} onPick={onPick} />
+            <RowCells key={rf} rf={rf} C={C} H={H} curRw={curRw} curRf={curRf} maxAbs={maxAbs} onPick={onPick} lang={lang} />
           ))}
         </div>
       </div>
       <p className="mt-3 border-t border-dashed border-line-soft pt-3 text-[11.5px] text-mist">
-        通胀每上升 1%，1000 万资本的真实购买力收益就少 10 万/年——Rf 是沉默的财富小偷。
+        {t(lang, "sensitivityDesc")}
       </p>
     </section>
   );
@@ -59,6 +62,7 @@ function RowCells({
   curRf,
   maxAbs,
   onPick,
+  lang,
 }: {
   rf: number;
   C: number;
@@ -67,6 +71,7 @@ function RowCells({
   curRf: number;
   maxAbs: number;
   onPick: (rw: number, rf: number) => void;
+  lang: "zh" | "en";
 }) {
   return (
     <>
@@ -90,7 +95,7 @@ function RowCells({
             {fmtSignedWan(v)}
             {isCur && (
               <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-sm bg-gold px-1 font-mono text-[8.5px] font-bold text-pine-950">
-                当前
+                {t(lang, "currentLabel")}
               </span>
             )}
           </button>

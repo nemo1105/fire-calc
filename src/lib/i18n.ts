@@ -79,21 +79,29 @@ export const translations = {
     
     // ProjectionChart
     projectionTitle: "资产推演 · 通往自由之路",
-    projectionSubtitle: "按当前收益率与每月储蓄推演未来 60 年资产曲线",
+    projectionSubtitle: "实际收益率 {0}%/年 · 每年追加储蓄 {1} · 按今日购买力计",
     assetCurve: "资产曲线",
-    freedomLine: "自由线",
+    freedomLine: "自由线 C*",
     year: "年",
     asset: "资产",
     freedom: "自由",
     yearsToFreedom: "第 {0} 年 · 自由",
     noFreedomIn40: "40 年内无法达标",
+    projectionDesc1: "保持现状：约",
+    projectionDesc2: "年后资产站上自由线",
+    projectionDesc3: "，届时 Fn ≥ 0。",
+    projectionDesc4: "以当前节奏，",
+    projectionDesc5: "内无法触及自由线——试试调高储蓄或收益率。",
+    projectionDesc6: "收益未能跑赢通胀，自由线在无穷远处；先解决「跑赢印钞机」的问题。",
     
     // SensitivityGrid
     sensitivityTitle: "Rw × Rf 敏感性沙盘",
-    sensitivitySubtitle: "点击任意格子试算，直观展示通胀是沉默的财富小偷",
+    sensitivitySubtitle: "按完整公式 Fn = C×(Rw−Rf)−H 推演 · 点击任意格子试算",
     rwLabel: "Rw · 投资收益率",
     rfLabel: "Rf · 社会通胀率",
     clickToTest: "点击任意格子试算",
+    sensitivityDesc: "通胀每上升 1%，1000 万资本的真实购买力收益就少 10 万/年——Rf 是沉默的财富小偷。",
+    currentLabel: "当前",
     
     // TiersLadder
     tiersTitle: "自由段位阶梯",
@@ -101,6 +109,8 @@ export const translations = {
     nextTier: "下一段",
     unlocked: "已解锁 ✓",
     tierNote: "* 段位门槛为网络流传说法的整理，仅供参照娱乐；真正的标准，由你的 H 说了算。",
+    tiersUnlocked: "段",
+    stillNeedLabel: "还差",
     
     // Tiers names
     tierMarket: "菜场自由",
@@ -209,21 +219,29 @@ export const translations = {
     
     // ProjectionChart
     projectionTitle: "Asset Projection · Path to Freedom",
-    projectionSubtitle: "Project 60-year asset curve based on current return rate and monthly savings",
+    projectionSubtitle: "Actual return {0}%/year · Annual savings {1} · At today's purchasing power",
     assetCurve: "Asset Curve",
-    freedomLine: "Freedom Line",
+    freedomLine: "Freedom Line C*",
     year: "Year",
     asset: "Asset",
     freedom: "Freedom",
     yearsToFreedom: "Year {0} · Freedom",
     noFreedomIn40: "Can't reach target within 40 years",
+    projectionDesc1: "Stay the course: about",
+    projectionDesc2: "years until assets cross the freedom line",
+    projectionDesc3: ", then Fn ≥ 0.",
+    projectionDesc4: "At current pace,",
+    projectionDesc5: "can't reach the freedom line — try increasing savings or return rate.",
+    projectionDesc6: "Returns can't beat inflation, freedom line is at infinity; solve the 'beat the money printer' problem first.",
     
     // SensitivityGrid
     sensitivityTitle: "Rw × Rf Sensitivity Sandbox",
-    sensitivitySubtitle: "Click any cell to test, intuitively showing inflation is the silent wealth thief",
+    sensitivitySubtitle: "Full formula Fn = C×(Rw−Rf)−H · Click any cell to test",
     rwLabel: "Rw · Investment Return",
     rfLabel: "Rf · Social Inflation",
     clickToTest: "Click any cell to test",
+    sensitivityDesc: "Every 1% increase in inflation reduces real purchasing power returns on 10M capital by 100K/year — Rf is the silent wealth thief.",
+    currentLabel: "Current",
     
     // TiersLadder
     tiersTitle: "Freedom Tiers Ladder",
@@ -231,6 +249,8 @@ export const translations = {
     nextTier: "Next tier",
     unlocked: "Unlocked ✓",
     tierNote: "* Tier thresholds are compiled from internet rumors, for reference only; the real standard is determined by your H.",
+    tiersUnlocked: "tiers",
+    stillNeedLabel: "Still need",
     
     // Tiers names
     tierMarket: "Market Freedom",
