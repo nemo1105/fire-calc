@@ -5,31 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>财务自由计算器 | Fn = C×(Rw−Rf)−H | 输入四个变量即刻得出自由指数</title>
-    <meta name="title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
-    <meta name="description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入资本总量、年开销、投资收益率、通胀率，即刻得出是否已自由、还需多少资本、几年可达自由。支持资产推演、敏感性分析、自由段位阶梯。" />
-    <meta name="keywords" content="财务自由, FIRE, 财务自由计算器, 被动收入, 投资收益, 通胀率, 自由指数, Fn, 资本总量, 年开销, 收益率, 资产推演" />
+    <title>财务自由计算器 | Financial Freedom Calculator | Fn = C×(Rw−Rf)−H</title>
+    <meta name="title" content="财务自由计算器 | Financial Freedom Calculator | Fn = C×(Rw−Rf)−H" />
+    <meta name="description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数 | Calculate your financial freedom index based on Fn = C×(Rw−Rf)−H. Input capital, annual expenses, investment return, and inflation rate to instantly determine your freedom status." />
+    <meta name="keywords" content="财务自由, FIRE, 财务自由计算器, 被动收入, 投资收益, 通胀率, 自由指数, financial freedom, freedom calculator, passive income, investment return, inflation rate, freedom index" />
     <meta name="author" content="财务自由计算器" />
     <meta name="robots" content="index, follow" />
-    <meta name="language" content="Chinese" />
+    <meta name="language" content="Chinese, English" />
     <meta name="revisit-after" content="7 days" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="./" />
-    <meta property="og:title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
-    <meta property="og:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。" />
+    <meta property="og:url" content="/" />
+    <meta property="og:title" content="财务自由计算器 | Financial Freedom Calculator | Fn = C×(Rw−Rf)−H" />
+    <meta property="og:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数 | Calculate your financial freedom index based on Fn = C×(Rw−Rf)−H. Input four variables to instantly determine your freedom status." />
     <meta property="og:image" content="./og-image.svg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="zh_CN" />
-    <meta property="og:site_name" content="财务自由计算器" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="财务自由计算器 | Financial Freedom Calculator" />
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="./" />
-    <meta name="twitter:title" content="财务自由计算器 | Fn = C×(Rw−Rf)−H" />
-    <meta name="twitter:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:title" content="财务自由计算器 | Financial Freedom Calculator | Fn = C×(Rw−Rf)−H" />
+    <meta name="twitter:description" content="基于公式 Fn = C×(Rw−Rf)−H 计算你的财务自由指数 | Calculate your financial freedom index based on Fn = C×(Rw−Rf)−H. Input four variables to instantly determine your freedom status." />
     <meta name="twitter:image" content="./og-image.svg" />
     
     <!-- Favicon -->
@@ -113,6 +114,75 @@
     }
     </script>
     
+    <!-- English JSON-LD Structured Data -->
+    <script type="application/ld+json" lang="en">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Financial Freedom Calculator",
+      "alternateName": "财务自由计算器",
+      "url": "./",
+      "description": "Calculate financial freedom index based on Fn = C×(Rw−Rf)−H. Input total capital, annual expenses, investment return rate, and inflation rate to instantly determine if you're financially free, how much more capital you need, and how many years until freedom.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareHelp": {
+        "@type": "CreativeWork",
+        "url": "./README.md"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Financial Freedom Index Fn calculation",
+        "Asset projection chart (60-year asset curve vs freedom line)",
+        "Rw×Rf sensitivity grid",
+        "Nine tiers of freedom ladder",
+        "Fuck You Fund calculation",
+        "Preset scenarios (Classic Case, Minimalist Life, Decent Middle Class, Luxury Life)"
+      ],
+      "author": {
+        "@type": "Organization",
+        "name": "Financial Freedom Calculator"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json" lang="en">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the Financial Freedom Index Fn?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Financial Freedom Index Fn = C×(Rw−Rf)−H, where C is total capital, Rw is investment return rate, Rf is inflation rate, and H is annual expenses. When Fn is positive, it means your capital returns cover living expenses, indicating you've achieved financial freedom."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How to calculate financial freedom?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Input your total capital (C), annual expenses (H), investment return rate (Rw), and inflation rate (Rf). The calculator will automatically compute the Fn value. If Fn is positive, you're free; if negative, it shows how much more capital you need and how many years until freedom."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Fuck You Fund?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Fuck You Fund equals approximately 2 years of annual expenses. It's the courage for adults to be free from fear — the ability to say 'no' to things you don't want to do at any time."
+          }
+        }
+      ]
+    }
+    </script>
+    
     <style>
       html, body { margin: 0; padding: 0; width: 100%; }
       .seo-content { max-width: 800px; margin: 0 auto; padding: 40px 20px; font-family: 'Noto Sans SC', sans-serif; color: #f1eada; background: #06140f; }
@@ -123,11 +193,28 @@
       .seo-content .vars { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
       .seo-content .var { background: #0b2019; padding: 15px; border-radius: 6px; border-left: 3px solid #e8b54a; }
       .seo-content .var strong { color: #f3d488; display: block; margin-bottom: 5px; }
+      .seo-en { display: none; }
+      .seo-zh { display: block; }
+      html[lang="en"] .seo-en { display: block; }
+      html[lang="en"] .seo-zh { display: none; }
     </style>
+    <script>
+      // Detect language before React loads
+      (function() {
+        var lang = navigator.language || navigator.userLanguage || 'zh';
+        if (lang.toLowerCase().startsWith('zh')) {
+          document.documentElement.lang = 'zh';
+        } else {
+          document.documentElement.lang = 'en';
+        }
+      })();
+    </script>
   </head>
   <body>
     <!-- SEO Content (visible to crawlers, replaced by React on mount) -->
     <div id="seo-content" class="seo-content">
+      <!-- Chinese Version -->
+      <div class="seo-zh" lang="zh">
       <h1>财务自由计算器</h1>
       <p>基于公式 <strong>Fn = C × (Rw − Rf) − H</strong> 计算你的财务自由指数。输入四个变量，即刻得出是否已自由、还需多少资本、几年可达自由。</p>
       
@@ -179,6 +266,62 @@
         "金钱解决不了的问题，答案在金钱之外。"<br/>
         "免于恐惧，求得一个心中安稳。"
       </p>
+      </div>
+      
+      <!-- English Version -->
+      <div class="seo-en" lang="en">
+      <h1>Financial Freedom Calculator</h1>
+      <p>Calculate your financial freedom index based on the formula <strong>Fn = C × (Rw − Rf) − H</strong>. Input four variables to instantly determine if you're financially free, how much more capital you need, and how many years until freedom.</p>
+      
+      <div class="formula">
+        Fn = C × (Rw − Rf) − H
+      </div>
+      
+      <h2>Formula Explanation</h2>
+      <div class="vars">
+        <div class="var">
+          <strong>C · Total Capital</strong>
+          Wealth available for investment to generate returns (cash, funds, rental assets, etc.)
+        </div>
+        <div class="var">
+          <strong>H · Happiness Threshold</strong>
+          Annual net expense required to maintain your decent lifestyle
+        </div>
+        <div class="var">
+          <strong>Rw · Investment Return Rate</strong>
+          Comprehensive annual return from bank wealth management, stock funds, rental income, etc.
+        </div>
+        <div class="var">
+          <strong>Rf · Social Inflation Rate</strong>
+          The speed at which your total wealth is diluted
+        </div>
+      </div>
+      
+      <h2>Core Features</h2>
+      <ul style="color: #9ab5a8; line-height: 2;">
+        <li><strong style="color: #f3d488;">Financial Freedom Index Fn</strong>: When Fn is positive, your capital returns cover living expenses — you're free</li>
+        <li><strong style="color: #f3d488;">Required Capital C*</strong>: Shows how much more money you need to achieve freedom</li>
+        <li><strong style="color: #f3d488;">Asset Projection Chart</strong>: Projects 60-year asset curve against the freedom line based on actual returns</li>
+        <li><strong style="color: #f3d488;">Rw×Rf Sensitivity Grid</strong>: Click any cell to test, visually demonstrating inflation as the silent wealth thief</li>
+        <li><strong style="color: #f3d488;">Nine Tiers of Freedom</strong>: From market freedom to ultimate freedom, unlocked by capital level</li>
+        <li><strong style="color: #f3d488;">Fuck You Fund</strong>: Approximately 2 years of expenses, the courage to say "no" to life anytime</li>
+      </ul>
+      
+      <h2>Preset Scenarios</h2>
+      <ul style="color: #9ab5a8; line-height: 2;">
+        <li><strong>Classic Case</strong>: 10M capital · 300K annual expense · 9% return · 3% inflation</li>
+        <li><strong>Minimalist Life</strong>: Control desires, get closer to freedom</li>
+        <li><strong>Decent Middle Class</strong>: Annual expense for good quality of life</li>
+        <li><strong>Luxury Life</strong>: Higher happiness threshold, larger capital base</li>
+      </ul>
+      
+      <h2>About</h2>
+      <p>This tool is built on the financial freedom index formula Fn = C × (Rw − Rf) − H.</p>
+      <p style="color: #e8b54a; font-style: italic; margin-top: 20px;">
+        "The answer to problems money can't solve lies beyond money."<br/>
+        "Free from fear, seeking peace of mind."
+      </p>
+      </div>
     </div>
     
     <!-- React App Root -->
